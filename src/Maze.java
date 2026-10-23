@@ -32,8 +32,26 @@ public class Maze {
      * Returns the indexes of the broken walls.
      */
     public static int[] cheapestMaze(Input.Walls w) {
-        // TODO
-        return new int[0];
+        DisjointSet disjointSet = new DisjointSet(w.cells());
+        int[] brokenWalls = new int[w.count()];
+        int countBrokenWalls = 0;
+        Integer[] wallIndexes = new Integer[w.count()];
+
+        for (int i = 0; i < w.count(); i++){
+            wallIndexes[i] = i;
+        }
+        Arrays.sort(wallIndexes,(a,b) ->
+                Integer.compare(w.cost()[a],w.cost()[b])
+        );
+
+        for (int index : wallIndexes){
+            if (disjointSet.union(w.a()[index],w.b()[index])){
+                brokenWalls[countBrokenWalls] = index;
+                countBrokenWalls++;
+
+            }
+        }
+        return Arrays.copyOf(brokenWalls,countBrokenWalls);
     }
 
     /**
