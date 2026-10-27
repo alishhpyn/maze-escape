@@ -58,25 +58,25 @@ I used ChatGPT as a learning assistant: it explained algorithms, helped me find 
 Milliseconds, 5 runs each, from `java -cp out Bench`.
 
 | maze | Kruskal | Prim |
-|---|---|---|
-| 100 x 100 | | |
-| 300 x 300 | | |
-| 1000 x 1000 | | |
+|---|---------|------|
+| 100 x 100 | 14      | 7    |
+| 300 x 300 | 67      | 61   |
+| 1000 x 1000 | 984     | 1600 |
 
-What do the numbers say about how the time grows? Two or three sentences.
+The results show that both algorithms take more time as the maze gets larger. Kruskal is faster on the 1000 x 1000 maze in these measurements, while Prim is faster on the 100 x 100 maze. The measured times can vary between runs depending on the computer and system load.
 
 ## Complexity
 
 n is the number of cells, m the number of walls (or slides). Fill in every algorithm you wrote.
 
-| algorithm | time | space | assumptions |
-|---|---|---|---|
-| DSU find and union | | | |
-| Kruskal | | | |
-| Prim | | | |
-| DFS | | | |
-| Kosaraju | | | |
-| Route in the zone graph | | | |
+| algorithm | time                     | space | assumptions |
+|---|--------------------------|---|---|
+| DSU find and union | Amortized O(α(n)) per operation | O(n)| Path compression and union by size|
+| Kruskal | O(m log m)               |O(n + m)|Sorting all walls dominates; DSU operations are nearly constant amortized time |
+| Prim | O(m logm)                |O(n + m) | Adjacency lists and a priority queue; duplicate queue entries may occur|
+| DFS |O(n + m)                  |O(n)|Iterative DFS with adjacency lists and an explicit stack |
+| Kosaraju |O(n + m)                  |O(n + m) |Two iterative DFS passes; reverse graph is stored |
+| Route in the zone graph |      O(Vz + Ez)                    |O(Vz + Ez)|Dynamic programming over a DAG in topological order; Vz is the number of zones and Ez is the number of zone edges |
 
 ## Before you submit
 
