@@ -1,9 +1,11 @@
 import java.util.Arrays;
+import java.util.PriorityQueue;
 /**
  * Missions 1 and 2. Building the maze out of the walls.
  * A wall k joins the cells w.a()[k] and w.b()[k] and costs w.cost()[k]. Indexes start from 0,
  * the line number in walls.txt is the index + 1. The cells are connected by DisjointSet.
  */
+record Wall(int index,int from, int to,int cost){}
 public class Maze {
 
     /**
@@ -59,7 +61,44 @@ public class Maze {
      * It must be equal to the total cost of cheapestMaze.
      */
     public static long primCost(Input.Walls w) {
-        // TODO
-        return 0;
+        boolean[] visited = new boolean[w.cells()];
+        PriorityQueue<Wall> pq = new PriorityQueue<>(
+                (a,b) -> Integer.compare(a.cost(),b.cost())
+        );
+        visited[0] = true;
+        for (int i = 0; i < w.count(); i++) {
+            if (((visited[w.a()[i]]) && !(visited[w.b()[i]]))
+                    || (!(visited[w.a()[i]]) && (visited[w.b()[i]]))) {
+                pq.add(new Wall(i, w.a()[i], w.b()[i], w.cost()[i]));
+            }
+        }
+        long totalCost = 0;
+
+        while(!pq.isEmpty()){
+            Wall wall = pq.poll();
+
+            if (visited[wall.from()] && visited[wall.to()]){
+                continue;
+            }
+
+            int newCell;
+
+            if (!visited[wall.from()]) {
+                newCell = wall.from();
+            } else {
+                newCell = wall.to();
+            }
+
+            visited[newCell] = true;
+            totalCost += wall.cost();
+
+            for (int i = 0; i < w.count(); i++) {
+                if (visited[w.a()[i]] != visited[w.b()[i]]) {
+                    pq.add(new Wall(i, w.a()[i], w.b()[i], w.cost()[i]));
+                }
+            }
+        }
+
+        return totalCost;
     }
 }
