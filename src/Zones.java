@@ -104,7 +104,52 @@ public class Zones {
      * [1] the cost of the cheapest route from the zone of cell 0 to the zone of the last cell.
      */
     public static long[] routes(Input.Slides s, int[] zoneOf, int zoneCount) {
-        // TODO
-        return new long[]{0, 0};
+        int n = s.n();
+
+        long[] distance = new long[zoneCount];
+        long[] stages = new long[zoneCount];
+
+        Arrays.fill(distance, Long.MAX_VALUE);
+
+        int startZone = zoneOf[0];
+        int exitZone = zoneOf[n - 1];
+
+        distance[startZone] = 0;
+        stages[startZone] = 1;
+
+        for (int zone = 0; zone < zoneCount; zone++) {
+            if (distance[zone] == Long.MAX_VALUE) {
+                continue;
+            }
+
+            for (int i = 0; i < s.from().length; i++) {
+                int fromZone = zoneOf[s.from()[i]];
+                int toZone = zoneOf[s.to()[i]];
+
+                if (fromZone != zone || fromZone == toZone) {
+                    continue;
+                }
+
+                long candidate = distance[zone] + s.time()[i];
+
+                if (candidate < distance[toZone]) {
+                    distance[toZone] = candidate;
+                }
+
+                stages[toZone] = Math.max(
+                        stages[toZone],
+                        stages[zone] + 1
+                );
+            }
+        }
+
+        long cheapestCost = distance[exitZone];
+        long flowStages = 0;
+
+        for (long stage : stages) {
+            flowStages = Math.max(flowStages, stage);
+        }
+
+        return new long[]{flowStages, cheapestCost};
     }
 }
