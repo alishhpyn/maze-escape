@@ -61,40 +61,72 @@ public class Maze {
      * It must be equal to the total cost of cheapestMaze.
      */
     public static long primCost(Input.Walls w) {
-        boolean[] visited = new boolean[w.cells()];
-        PriorityQueue<Wall> pq = new PriorityQueue<>(
-                (a,b) -> Integer.compare(a.cost(),b.cost())
-        );
-        visited[0] = true;
-        for (int i = 0; i < w.count(); i++) {
-            if (((visited[w.a()[i]]) && !(visited[w.b()[i]]))
-                    || (!(visited[w.a()[i]]) && (visited[w.b()[i]]))) {
-                pq.add(new Wall(i, w.a()[i], w.b()[i], w.cost()[i]));
-            }
+        int n = w.cells();
+        int m = w.count();
+
+        if (n <= 1) {
+            return 0;
         }
+
+        int[] a = w.a();
+        int[] b = w.b();
+        int[] cost = w.cost();
+
+        int[] degree = new int[n];
+
+        for (int k = 0; k < m; k++) {
+            degree[a[k]]++;
+            degree[b[k]]++;
+        }
+
+        int[][] incident = new int[n][];
+
+        for (int i = 0; i < n; i++) {
+            incident[i] = new int[degree[i]];
+        }
+
+        Arrays.fill(degree, 0);
+
+        for (int k = 0; k < m; k++) {
+            incident[a[k]][degree[a[k]]++] = k;
+            incident[b[k]][degree[b[k]]++] = k;
+        }
+
+        boolean[] inTree = new boolean[n];
+
+        PriorityQueue<Integer> pq = new PriorityQueue<>(
+                (left, right) -> Integer.compare(cost[left], cost[right])
+        );
+
+        inTree[0] = true;
+        int visitedCount = 1;
         long totalCost = 0;
 
-        while(!pq.isEmpty()){
-            Wall wall = pq.poll();
+        for (int edge : incident[0]) {
+            pq.offer(edge);
+        }
 
-            if (visited[wall.from()] && visited[wall.to()]){
+        while (visitedCount < n && !pq.isEmpty()) {
+            int k = pq.poll();
+
+            int u = a[k];
+            int v = b[k];
+
+            if (inTree[u] && inTree[v]) {
                 continue;
             }
 
-            int newCell;
+            int next = inTree[u] ? v : u;
 
-            if (!visited[wall.from()]) {
-                newCell = wall.from();
-            } else {
-                newCell = wall.to();
-            }
+            inTree[next] = true;
+            visitedCount++;
+            totalCost += cost[k];
 
-            visited[newCell] = true;
-            totalCost += wall.cost();
+            for (int edge : incident[next]) {
+                int other = a[edge] == next ? b[edge] : a[edge];
 
-            for (int i = 0; i < w.count(); i++) {
-                if (visited[w.a()[i]] != visited[w.b()[i]]) {
-                    pq.add(new Wall(i, w.a()[i], w.b()[i], w.cost()[i]));
+                if (!inTree[other]) {
+                    pq.offer(edge);
                 }
             }
         }

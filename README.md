@@ -1,9 +1,9 @@
 # Assignment 3. Maze Escape
 
-Student ID:
-Name:
-Group:
-Maze size (rows x columns):
+Student ID:254042
+Name:Balyasnyy Alisher
+Group:SE-2510
+Maze size (rows x columns):9 x 9
 
 This file is the report. Fill it in as you go. How to start: `START_HERE.md`. The task: `docs/Assignment3.pdf`.
 
@@ -11,19 +11,19 @@ This file is the report. Fill it in as you go. How to start: `START_HERE.md`. Th
 
 The 13 lines your program prints on your data (`java -cp out Main`):
 
-    Broken:
-    Kept:
-    Last broken wall:
-    MST cost:
-    Heaviest broken wall:
-    Path length:
-    DFS visited:
-    Dead ends:
-    Zones:
-    Largest zone:
-    Is DAG:
-    Flow stages:
-    Fastest route cost:
+    Broken: 80
+    Kept: 64
+    Last broken wall: 130
+    MST cost: 25037
+    Heaviest broken wall: 846
+    Path length: 20
+    DFS visited: 50
+    Dead ends: 26
+    Zones: 81
+    Largest zone: 1
+    Is DAG: 1
+    Flow stages: 14
+    Fastest route cost: 20
 
 My maze:
 
@@ -31,23 +31,27 @@ My maze:
 
 ## Questions
 
-Answer in your own words, two or three sentences each.
-
 Mission 0. What do find and union do, and what makes them fast in your code?
+The find method returns the representative of the set containing an element. The union method
+joins two different sets. Path compression and union by size make these operations efficient.
 
 Mission 1. Why is Broken always R*C - 1, and Kept always (R-1)*(C-1)?
+A maze with R rows and C columns has R × C cells. Breaking R × C − 1 walls connects all cells into a spanning tree, so Broken is R × C − 1. The remaining walls are (R − 1) × (C − 1), because the total number of internal walls is 2RC − R − C.
 
 Mission 2. My MST cost from Kruskal and from Prim, and why they are equal:
+Kruskal and Prim find a minimum spanning tree of the same connected, weighted maze graph. Their MST costs are equal because both algorithms find a minimum spanning tree, although they choose walls in different orders.
 
 Mission 3. Why is there exactly one path between two cells? How did you avoid a stack overflow on a huge maze?
+There is exactly one path between any two cells because the maze formed by the broken walls is a tree: it is connected and has no cycles. I used iterative DFS with an explicit stack instead of recursive calls to avoid a stack overflow on a large maze.
 
 Mission 4. Why does the second pass of Kosaraju go on the reversed graph? Why do the slides have no cycle exactly when Zones equals the number of cells?
+Kosaraju's algorithm uses the reversed graph in its second pass so that each search identifies one strongly connected component in the correct order. The slides have no cycle exactly when every strongly connected component contains one cell, so the number of zones equals the number of cells.
 
 Mission 5. Why is it enough to go through the zones in the order of their numbers? What does this pass cost?
-
+The zone graph is a DAG, and the zone numbers are assigned in topological order by Kosaraju's algorithm. Therefore, processing zones in that order lets us calculate route values from earlier zones to later ones using dynamic programming in O(V + E) time for the zone graph.
 ## AI use
 
-The syllabus requires you to say which AI tools you used and for what. Write the tool (ChatGPT, Copilot, other) and what you asked it: explain an idea, find an error, review code. Write "none" if you did not use any. If you took code or text from a book or a website, give the source here.
+I used ChatGPT as a learning assistant: it explained algorithms, helped me find errors, and reviewed my implementations for assignments 0–5. Thanks to these explanations, I gained a better understanding of the code.
 
 ## Timing (Mission 7)
 
